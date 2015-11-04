@@ -9,9 +9,13 @@ import com.android.volley.Response;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
+import java.net.URLEncoder;
+
 public class ServerApi {
 
     private static final String ROOT_URL = "https://www.googleapis.com/customsearch/v1?";
+    private static final String CX = "002491533294088049790:lutaks6ddpi";
+    private static final String API_KEY = "AIzaSyDlWIgHozOoZBS0F9bZkggwWFR_r87oT6Q";
     private static volatile ServerApi serverApi;
     private RequestQueue queue;
 
@@ -36,24 +40,26 @@ public class ServerApi {
 
     /**
      * функция получения картикок из поиска гугл
-     * @param q поисковой запрос
+     * @param query поисковой запрос
+     * @param start смещение относительно первой найденой картинки
      * @param responseListener колбек для успешного запроса
      * @param errorListener колбек для неудачного запроса
      */
-    public void getImages(Query q, Response.Listener<String> responseListener,
+    public void getImages(String query, int start, Response.Listener<String> responseListener,
                           Response.ErrorListener errorListener) {
-        StringRequest getRequest = new StringRequest(Request.Method.GET, createUrl(q),
+        StringRequest getRequest = new StringRequest(Request.Method.GET, createUrl(query, start),
                 responseListener, errorListener);
         queue.add(getRequest);
     }
 
-    /**
-     * преобразует параметры в поисковой url
-     * @param q параметры, для которых необходимо запрос создать
-     * @return url GET запроса с данными параметрами
-     */
-    private String createUrl(Query q) {
-        return ROOT_URL;
+    @SuppressWarnings("deprecation")
+    public String createUrl(String query, int start) {
+        String s = ROOT_URL;
+        //обязательные параметры
+        s += "q=" + URLEncoder.encode(query) + "&key=" + API_KEY + "&cx=" + CX;
+        if (start > 1) {
+            s += "&start=" + start;
+        }
+        return s;
     }
-
 }
