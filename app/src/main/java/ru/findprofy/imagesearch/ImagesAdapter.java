@@ -4,8 +4,9 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.LruCache;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,7 +27,7 @@ import java.util.ArrayList;
 public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ViewHolder> implements View.OnClickListener   {
 
     private LruCache<String, Bitmap> mCache;
-    private AppCompatActivity activity;
+    private FragmentActivity activity;
     private ProgressBar progressBar;
     private ArrayList<Image> images;
     private ServerApi api;
@@ -91,7 +92,13 @@ public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ViewHolder
         }
     };
 
-    public ImagesAdapter(AppCompatActivity activity, ProgressBar progressBar, String query) {
+    /**
+     * конструктор класса
+     * @param activity необходима для запуска просмотра полной версии изображения
+     * @param progressBar показывает пользователю, что идет запрос на сервер
+     * @param query поисковой запрос
+     */
+    public ImagesAdapter(FragmentActivity activity, ProgressBar progressBar, String query) {
         super();
         this.progressBar = progressBar;
         this.query = query;
@@ -105,6 +112,11 @@ public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ViewHolder
         downloadMore();
     }
 
+    /**
+     * парсит успешный ответ с сервера
+     * @param response ответ сервера
+     * @throws Exception генерируется, если формат ответа не соответствует стандартному
+     */
     private void parseItems(JSONObject response) throws Exception{
         JSONArray items = response.getJSONArray("items");
         String thumbnail;
@@ -136,9 +148,15 @@ public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ViewHolder
         ImagesAdapter.this.notifyItemRangeInserted(lastSize, images.size());
     }
 
+    /**
+     * устанавливает новый поисковой запрос
+     * @param q поисковой запрос
+     */
     public void setQuery(String q) {
+        // сбрасываем всю информацию
         query = q;
         start = 1;
+        finedAll = false;
         images.clear();
         notifyDataSetChanged();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR1) {
@@ -163,6 +181,9 @@ public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ViewHolder
         }
     }
 
+    /**
+     * подгружает дополнительные картинки
+     */
     public void downloadMore() {
         hasNotCompletedResponse = true;
         // при первом запросе необходимо показать пользователю, что чтото происходит
@@ -195,6 +216,7 @@ public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ViewHolder
             imageView.setImageUrl(img.getThumbnail(), new ImageLoader(api.getQueue(), new ImageLoader.ImageCache() {
 
                 public void putBitmap(String url, Bitmap bitmap) {
+                    // потом добавим кеширование для старых версий
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR1) {
                         mCache.put(img.getThumbnail(), bitmap);
                     }
@@ -219,8 +241,8 @@ public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ViewHolder
                         Bundle bundle = new Bundle();
                         bundle.putString(ShowImageFragment.IMG_SRC_TAG, img.getSrc());
                         f.setArguments(bundle);
-                        activity.getSupportFragmentManager()
-                                .beginTransaction().replace(R.id.container, f).commit();
+                        activity.getSupportFragmentManager().beginTransaction()
+                                .add(R.id.container, f).addToBackStack(null).commit();
                     }
                 }
             });

@@ -1,7 +1,13 @@
-<com.android.volley.toolbox.NetworkImageView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:scaleType="center"
-    android:id="@+id/network_image_view"
-    android:adjustViewBounds="true"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:padding="1dp"
     android:layout_margin="1dp"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content" />
+    android:background="@color/colorAccent"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent">
+    <com.android.volley.toolbox.NetworkImageView
+        android:scaleType="fitCenter"
+        android:adjustViewBounds="true"
+        android:id="@+id/network_image_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+</FrameLayout>

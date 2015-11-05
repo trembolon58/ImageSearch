@@ -1,5 +1,11 @@
 package ru.findprofy.imagesearch;
 
+/**
+ * класс хранит в себе информацию о картинке
+ * width height не используются
+ * так же можно расширить класс для хранения большего количества информации,
+ * которая приходит с ответом сервера
+ */
 public class Image {
 
     private String thumbnail;
