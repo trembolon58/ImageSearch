@@ -18,8 +18,8 @@ public class ServerApi {
     private static final String CX = "002491533294088049790:lutaks6ddpi";
     //в день не больше ста запросов, эти коды чистые
     //AIzaSyAMt0Idjov5bzPAY8F0EPLaoxzLdpb2BS0
-    //AIzaSyDzdw81tqy0FKuNBB3gquIYIMms1iT3iwA
-    private static final String API_KEY = "AIzaSyDuma_Q26xALfsevQY8miJ0Q4NW-NnmqBE";
+    //AIzaSyDuma_Q26xALfsevQY8miJ0Q4NW-NnmqBE
+    private static final String API_KEY = "AIzaSyDzdw81tqy0FKuNBB3gquIYIMms1iT3iwA";
     private static volatile ServerApi serverApi;
     private RequestQueue queue;
 

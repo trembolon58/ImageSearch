@@ -32,8 +32,8 @@ public class FindImageFragment extends Fragment {
         View root = inflater.inflate(R.layout.fragment_find_image, container, false);
         list = (RecyclerView) root.findViewById(R.id.image_list);
         progressBar = (ProgressBar) root.findViewById(R.id.progress);
-        //иконки очень маленькие, поэтому много рядов
-        StaggeredGridLayoutManager sglm = new StaggeredGridLayoutManager(6, StaggeredGridLayoutManager.VERTICAL);
+        //в данной версии отображаются большие изображения
+        StaggeredGridLayoutManager sglm = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         //постоянные перестройки бесят
         sglm.setGapStrategy(StaggeredGridLayoutManager.GAP_HANDLING_NONE);
         list.setLayoutManager(sglm);

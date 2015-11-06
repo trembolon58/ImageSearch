@@ -176,7 +176,7 @@ public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ViewHolder
         holder.setOnClickListener(images.get(position));
         // подгружаем дополнительные, если до конца осталось меньше 10 картинок,
         // чтобы пользователь не замечал подгрузку
-        if (images.size() - position < 10 && !hasNotCompletedResponse && !finedAll) {
+        if (images.size() - position < 2 && !hasNotCompletedResponse && !finedAll) {
             downloadMore();
         }
     }
@@ -211,22 +211,31 @@ public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ViewHolder
             super(itemView);
             imageView = (NetworkImageView) itemView.findViewById(R.id.network_image_view);
         }
-
+        //в данноф версии приложения отображаются больние картинки
         public void setOnClickListener(final Image img) {
-            imageView.setImageUrl(img.getThumbnail(), new ImageLoader(api.getQueue(), new ImageLoader.ImageCache() {
+            //не будем показывать еще не загруженную картинку
+            itemView.setVisibility(View.GONE);
+            imageView.setImageUrl(img.getSrc(), new ImageLoader(api.getQueue(), new ImageLoader.ImageCache() {
 
                 public void putBitmap(String url, Bitmap bitmap) {
                     // потом добавим кеширование для старых версий
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR1) {
-                        mCache.put(img.getThumbnail(), bitmap);
+                        mCache.put(img.getSrc(), bitmap);
                     }
+                    //отобразим карточку, как картинка загрузилось
+                    itemView.setVisibility(View.VISIBLE);
                 }
 
                 public Bitmap getBitmap(String url) {
                     // ImageLoader дописывает к каждому url случайную часть, чтобы не было совпадений
                     // нам они даже на руку
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR1) {
-                        return mCache.get(img.getThumbnail());
+                        Bitmap bitmap = mCache.get(img.getSrc());
+                        //запросу к сети не будет и картинка сразу отобразится
+                        if (bitmap != null) {
+                            itemView.setVisibility(View.VISIBLE);
+                        }
+                        return bitmap;
                     } else {
                         return null;
                     }
